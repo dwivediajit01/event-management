@@ -1,0 +1,54 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 shadow-sm">
+  <a class="navbar-brand font-weight-bold text-warning" href="{% url 'home' %}">
+    🎉 EventHub
+  </a>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav mr-auto">
+      {% if user.is_authenticated %}
+        {% if request.session.role == 'EventManager' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'event_manager_dashboard' %}">📊 Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'event_create' %}">➕ Create Event</a>
+          </li>
+        {% elif request.session.role == 'Attendee' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'event_list' %}">📅 Browse Events</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'attendee_profile' %}">🙋‍♂️ My Profile</a>
+          </li>
+        {% endif %}
+      {% endif %}
+    </ul>
+
+    <ul class="navbar-nav ml-auto align-items-center">
+      {% if user.is_authenticated %}
+        <li class="nav-item">
+          <span class="navbar-text text-light mr-3">
+            👤 <strong>{{ user.username }}</strong> | Role: <span class="badge badge-info">{{ request.session.role }}</span>
+          </span>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link logout-link text-danger font-weight-bold" href="{% url 'logout' %}">
+            🔓 Logout
+          </a>
+        </li>
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link btn btn-outline-light btn-sm mr-2 px-3 login-btn" href="{% url 'login' %}">🔐 Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-success btn-sm px-3" href="{% url 'signup' %}">📝 Signup</a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>

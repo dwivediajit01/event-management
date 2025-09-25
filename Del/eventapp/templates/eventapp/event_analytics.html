@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+<!-- To Download the Event Analytics Dashboard -->
+
+<!-- <button onclick="window.print()" class="btn btn-primary" style="margin-bottom: 20px;">
+  🖨️ Download / Print Report
+</button> -->
+
+<div class="print-area">
+
+  <!-- <h2 class="mb-4">📊 Event Analytics Dashboard</h2> -->
+  <div class="analytics-header">
+    <h2>📊 Event Analytics Dashboard</h2>
+    <button onclick="window.print()"  class="btn btn-sm btn-primary download-btn">
+      🖨️ Download Report
+    </button>
+  </div>
+  <!-- 📌 Summary Cards -->
+  <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+    <div class="card"><strong>Total Events:</strong> {{ total_events }}</div>
+    <div class="card"><strong>Total Attendees:</strong> {{ total_attendees }}</div>
+    <div class="card"><strong>Average Attendees/Event:</strong> {{ avg_attendees }}</div>
+  </div>
+
+  <!-- 📈 Charts Section -->
+  <div id="allEventsChart" style="height: 400px; margin-top: 40px;"></div>
+  <div id="pieChart" style="height: 400px; margin-top: 40px;"></div>
+  <div id="topEventsChart" style="height: 400px; margin-top: 40px;"></div>
+  <div id="trendChart" style="height: 400px; margin-top: 40px;"></div>
+
+  <!-- Google Charts -->
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script>
+    google.charts.load('current', { packages: ['corechart'] });
+    google.charts.setOnLoadCallback(drawAllCharts);
+
+    function drawAllCharts() {
+      drawBarChart('allEventsChart', {{ chart_data| safe }}, '📊 Attendees per Event', 'Event', 'Attendees');
+    drawPieChart('pieChart', {{ pie_data| safe }}, '🥧 Participation Share');
+    drawBarChart('topEventsChart', {{ top_events_data| safe }}, '🔝 Top 5 Events', 'Event', 'Attendees');
+    drawLineChart('trendChart', {{ trend_data| safe }}, '📈 Registration Trend Over Time', 'Date', 'Registrations');
+  }
+
+    function drawBarChart(elementId, dataArray, title, hAxisTitle, vAxisTitle) {
+      const data = google.visualization.arrayToDataTable(dataArray);
+      const options = {
+        title: title,
+        hAxis: { title: hAxisTitle },
+        vAxis: { title: vAxisTitle },
+        legend: 'none',
+        colors: ['#4285F4']
+      };
+      const chart = new google.visualization.ColumnChart(document.getElementById(elementId));
+      chart.draw(data, options);
+    }
+
+    function drawPieChart(elementId, dataArray, title) {
+      const data = google.visualization.arrayToDataTable(dataArray);
+      const options = {
+        title: title,
+        pieHole: 0.4,
+        colors: ['#3366CC', '#DC3912', '#FF9900', '#109618', '#990099']
+      };
+      const chart = new google.visualization.PieChart(document.getElementById(elementId));
+      chart.draw(data, options);
+    }
+
+    function drawLineChart(elementId, dataArray, title, hAxisTitle, vAxisTitle) {
+      const data = google.visualization.arrayToDataTable(dataArray);
+      const options = {
+        title: title,
+        hAxis: { title: hAxisTitle },
+        vAxis: { title: vAxisTitle },
+        legend: { position: 'bottom' },
+        colors: ['#00ACC1']
+      };
+      const chart = new google.visualization.LineChart(document.getElementById(elementId));
+      chart.draw(data, options);
+    }
+  </script>
+</div>
+
+<!-- Optional Styling -->
+<style>
+  .analytics-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .card {
+    padding: 1rem 1.5rem;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    flex: 1;
+    text-align: center;
+    min-width: 200px;
+  }
+
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+
+    .print-area,
+    .print-area * {
+      visibility: visible;
+    }
+
+    .print-area {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px;
+    }
+
+    .btn,
+    .navbar,
+    .sidebar {
+      display: none !important;
+    }
+  }
+</style>
+
+
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="mb-4 text-center">📅 Event Dashboard</h2>
+
+    <div class="text-center mb-4">
+        {% if request.session.role == 'EventManager' %}
+            <a href="{% url 'event_create' %}" class="btn btn-success mr-2">+ Create Event</a>
+            <a href="{% url 'event_analytics' %}" class="btn btn-info">📊 Analytics</a>
+        {% elif request.session.role == 'Attendee' %}
+            <a href="{% url 'attendee_profile' %}" class="btn btn-primary">👤 My Profile</a>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <!-- Upcoming Events -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    🟢 Upcoming Events
+                </div>
+                <div class="card-body">
+                    {% if upcoming_events %}
+                        {% for event in upcoming_events %}
+                            <div class="mb-4 border-bottom pb-2">
+                                <h5>{{ event.title }}</h5>
+                                <p class="mb-1 text-muted">{{ event.date|date:"D, M d Y H:i" }}</p>
+                                <p>{{ event.description|truncatechars:50 }}</p>
+                                <p>📅 Starts in: <span class="countdown" data-event-time="{{ event.date|date:'c' }}"></span></p>
+
+                                <a href="{% url 'event_detail' event.id %}" class="btn btn-sm btn-secondary">Details</a>
+
+                                {% if request.session.role == 'Attendee' %}
+                                    {% if event.max_capacity %}
+                                        {% if event.is_full %}
+                                            <span class="btn btn-sm btn-danger disabled">Full</span>
+                                        {% else %}
+                                            <a href="{% url 'event_register' event.id %}" class="btn btn-sm btn-warning">
+                                                {{ event.seats_left }} Seats Left - Register
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if request.session.role == 'EventManager' %}
+                                    <a href="{% url 'event_delete' event.id %}" class="btn btn-sm btn-danger">Delete</a>
+                                    <a href="{% url 'export_event_csv' event.id %}" class="btn btn-sm btn-info">Download Attendees</a>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No upcoming events.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Past Events -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    🔴 Past Events
+                </div>
+                <div class="card-body">
+                    {% if past_events %}
+                        {% for event in past_events %}
+                            <div class="mb-4 border-bottom pb-2">
+                                <h5>{{ event.title }}</h5>
+                                <p class="mb-1 text-muted">{{ event.date|date:"D, M d Y H:i" }}</p>
+                                <p>{{ event.description|truncatechars:50 }}</p>
+
+                                <a href="{% url 'event_detail' event.id %}" class="btn btn-sm btn-secondary">Details</a>
+
+                                {% if request.session.role == 'EventManager' %}
+                                    <a href="{% url 'event_delete' event.id %}" class="btn btn-sm btn-danger">Delete</a>
+                                    <a href="{% url 'export_event_csv' event.id %}" class="btn btn-sm btn-info">Download Attendees</a>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No past events.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Countdown Script -->
+<script>
+  function updateCountdowns() {
+    const countdownElements = document.querySelectorAll(".countdown");
+    for (let el of countdownElements) {
+      const eventTime = new Date(el.getAttribute("data-event-time"));
+      const now = new Date();
+      const diff = eventTime - now;
+
+      if (diff <= 0) {
+        el.innerText = "Event started!";
+        continue;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      el.innerText = `${days}d ${String(hours).padStart(2, '0')}h:${String(minutes).padStart(2, '0')}m:${String(seconds).padStart(2, '0')}s`;
+    }
+  }
+
+  updateCountdowns();
+  setInterval(updateCountdowns, 1000);
+</script>
+{% endblock %}

@@ -1,0 +1,43 @@
+<!-- templates/eventapp/event_manager_dashboard.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>👩‍💼 Event Manager Dashboard</h2>
+  <a href="{% url 'event_create' %}" class="btn btn-primary mb-3">+ Create New Event</a>
+
+  <h4>🟢 Upcoming Events</h4>
+  {% if events %}
+    <ul class="list-group mb-4">
+      {% for event in events %}
+        <li class="list-group-item">
+          <strong>{{ event.title }}</strong> - {{ event.date|date:"D, M d Y H:i" }}<br>
+          {{ event.description|truncatechars:100 }}<br>
+          ⏳ Time Left: <em>{{ event.time_left }}</em><br>
+          <a href="{% url 'event_detail' event.id %}" class="btn btn-sm btn-info">View</a>
+          <a href="{% url 'event_delete' event.id %}" class="btn btn-sm btn-danger">Delete</a>
+          <a href="{% url 'export_event_csv' event.id %}" class="btn btn-sm btn-success">Export Attendees</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No upcoming events.</p>
+  {% endif %}
+
+  <h4>🔴 Past Events</h4>
+  {% if past_events %}
+    <ul class="list-group">
+      {% for event in past_events %}
+        <li class="list-group-item">
+          <strong>{{ event.title }}</strong> - {{ event.date|date:"D, M d Y H:i" }}<br>
+          {{ event.description|truncatechars:100 }}<br>
+          <a href="{% url 'event_detail' event.id %}" class="btn btn-sm btn-info">View</a>
+          <a href="{% url 'export_event_csv' event.id %}" class="btn btn-sm btn-success">Export Attendees</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No past events yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

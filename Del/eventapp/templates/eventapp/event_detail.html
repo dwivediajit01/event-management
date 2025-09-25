@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-lg border-0">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">📌 {{ event.title }}</h4>
+      <span class="badge badge-light text-dark">{{ event.date|date:"D, M d Y H:i" }}</span>
+    </div>
+    <div class="card-body">
+      <p class="mb-2"><strong>📝 Description:</strong></p>
+      <p class="text-muted">{{ event.description }}</p>
+    </div>
+  </div>
+
+  {% if request.session.role == 'EventManager' %}
+ 
+    <div class="card-body">
+      {% if attendees %}
+      <a href="{% url 'view_event_attendees' event.id %}" class="btn btn-outline-info mt-3">🔍 See Full Attendee List</a>
+      
+      {% else %}
+      <p class="text-muted">No attendees registered yet.</p>
+      {% endif %}
+
+    
+  </div>
+  {% endif %}
+
+  <div class="mt-4">
+    <a href="{% url 'event_list' %}" class="btn btn-secondary">← Back to Events</a>
+  </div>
+</div>
+{% endblock %}

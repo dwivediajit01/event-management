@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow">
+    <div class="card-body">
+      <h3 class="card-title mb-3 text-primary">
+        👥 Attendees for <span class="text-dark">"{{ event.title }}"</span>
+      </h3>
+      <p><strong>📅 Date:</strong> {{ event.date|date:"D, M d Y H:i" }}</p>
+
+      <hr>
+
+      {% if attendees %}
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Registered On</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for attendee in attendees %}
+              <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ attendee.name }}</td>
+                <td>{{ attendee.email }}</td>
+                <td>{{ attendee.registered_at|date:"D, M d Y H:i:s" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="alert alert-warning">⚠️ No attendees registered yet.</div>
+      {% endif %}
+
+      <div class="d-flex justify-content-between mt-4">
+        <a href="{% url 'export_event_csv' event.id %}" class="btn btn-outline-success">
+          📥 Export to CSV
+        </a>
+        <a href="{% url 'event_manager_dashboard' %}" class="btn btn-secondary">
+          ← Back to Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

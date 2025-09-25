@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  {% load static %}
+
+<head>
+  <title>EventApp</title>
+  <link rel="icon" href="{% static 'images/favicon.ico' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</head>
+<style>
+  /* Fix for Login button hover */
+  .login-btn:hover {
+    color: #fff !important;
+    background-color: #28a745 !important; /* green highlight */
+    border-color: #28a745 !important;
+  }
+
+  /* Fix for Logout link hover */
+  .logout-link:hover {
+    color: #dc3545 !important; /* same red shade */
+    background-color: transparent !important;
+    text-decoration: underline;
+  }
+</style>
+
+
+<body>
+
+  <!-- ✅ Include the navbar.html -->
+  {% include 'navbar.html' %}
+
+  <div class="container mt-4">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-info">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+  </div>
+
+</body>
+
+</html>
