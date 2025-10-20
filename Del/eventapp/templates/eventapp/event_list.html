@@ -45,6 +45,7 @@
                                 {% endif %}
 
                                 {% if request.session.role == 'EventManager' %}
+                                <a href="{% url 'event_update' event.id %}" class="btn btn-sm btn-info">Edit Event</a>
                                     <a href="{% url 'event_delete' event.id %}" class="btn btn-sm btn-danger">Delete</a>
                                     <a href="{% url 'export_event_csv' event.id %}" class="btn btn-sm btn-info">Download Attendees</a>
                                 {% endif %}
