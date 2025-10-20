@@ -70,6 +70,30 @@ def event_create(request):
         messages.success(request, "✅ Event created successfully.")
         return redirect('event_manager_dashboard')
     return render(request, 'eventapp/event_form.html', {'form': form})
+# -----------------------------
+# ➕ Update Event
+# -----------------------------
+@role_required('EventManager')
+def event_update(request,event_id):
+    e = get_object_or_404(Event, id=event_id)
+
+    # If the form was submitted, bind POST data so changes are saved
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES or None, instance=e)
+        if form.is_valid():
+            date = form.cleaned_data.get('date')
+            # Ensure date is in the future
+            if date and date > timezone.localtime():
+                form.save()
+                messages.success(request, "✅ Event updated successfully.")
+                return redirect('event_manager_dashboard')
+            else:
+                messages.error(request, "⛔ Event date must be in the future.")
+    else:
+        # GET: show form populated with existing data
+        form = EventForm(instance=e)
+
+    return render(request, 'eventapp/event_edit.html', {'form': form, 'event': e})
 
 
 # -----------------------------
